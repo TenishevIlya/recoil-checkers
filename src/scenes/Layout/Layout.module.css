@@ -1,0 +1,8 @@
+.layoutContainer {
+  background-color: rgb(152, 157, 117);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
