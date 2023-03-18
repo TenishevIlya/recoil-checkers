@@ -1,5 +1,5 @@
 .layoutContainer {
-  background-color: rgb(152, 157, 117);
+  background-color: rgba(152, 157, 117, 0.5);
   width: 100vw;
   height: 100vh;
   display: flex;

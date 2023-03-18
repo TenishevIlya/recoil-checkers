@@ -1,0 +1,24 @@
+.tableStyles {
+  border: 1px solid rgb(0, 0, 0);
+  border-collapse: collapse;
+}
+
+.baseCellStyles {
+  width: 100px;
+  height: 100px;
+  border: 1px solid rgb(0, 0, 0);
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.beigeCell {
+  composes: baseCellStyles;
+  background-color: rgb(235, 226, 214);
+}
+
+.brownCell {
+  composes: baseCellStyles;
+  background-color: rgb(136, 125, 114);
+}
