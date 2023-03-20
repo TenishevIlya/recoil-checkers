@@ -1,14 +1,12 @@
-import tableStyles from "./Table.module.css";
+import { CellColors } from "../Cell/types";
 
-export const cellStyleMatcher = (
+export const cellColorDetector = (
   rowIndex: number,
   cellIndex: number
-): string => {
-  const { beigeCell, brownCell } = tableStyles;
-
+): CellColors => {
   if (rowIndex % 2 === 0) {
-    return cellIndex % 2 ? brownCell : beigeCell;
+    return cellIndex % 2 ? CellColors.brown : CellColors.beige;
   }
 
-  return cellIndex % 2 ? beigeCell : brownCell;
+  return cellIndex % 2 ? CellColors.beige : CellColors.brown;
 };

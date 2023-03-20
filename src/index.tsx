@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import Layout from "./scenes/Layout/Layout";
+import Layout from "./scenes/Layout";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

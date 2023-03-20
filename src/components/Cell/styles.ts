@@ -1,9 +1,6 @@
-.tableStyles {
-  border: 1px solid rgb(0, 0, 0);
-  border-collapse: collapse;
-}
+import styled, { css } from "styled-components";
 
-.baseCellStyles {
+export const BaseCellStyles = css`
   width: 100px;
   height: 100px;
   border: 1px solid rgb(0, 0, 0);
@@ -11,14 +8,14 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-}
+`;
 
-.beigeCell {
-  composes: baseCellStyles;
+export const BrownCell = styled.td`
+  ${BaseCellStyles}
   background-color: rgb(235, 226, 214);
-}
+`;
 
-.brownCell {
-  composes: baseCellStyles;
+export const BeigeCell = styled.td`
+  ${BaseCellStyles}
   background-color: rgb(136, 125, 114);
-}
+`;

@@ -2,4 +2,7 @@ export interface CheckerI {
   mode: CheckerMode;
 }
 
-export type CheckerMode = "white" | "black";
+export enum CheckerMode {
+  white = "white",
+  black = "black",
+}
