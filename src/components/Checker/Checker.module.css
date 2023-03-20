@@ -1,0 +1,15 @@
+.baseChecker {
+  border-radius: 50%;
+  height: 100px;
+  width: 100px;
+}
+
+.whiteChecker {
+  composes: baseChecker;
+  background-color: rgb(255, 255, 255);
+}
+
+.blackChecker {
+  composes: baseChecker;
+  background-color: rgb(0, 0, 0);
+}
