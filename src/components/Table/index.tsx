@@ -1,7 +1,8 @@
 import React, { ReactElement, ReactNode, useCallback } from "react";
 import type { TableI } from "./types";
-import tableStyles from "./Table.module.css";
-import { cellStyleMatcher } from "./helper";
+import { cellColorDetector } from "./helper";
+import { StyledTable } from "./styles";
+import Cell from "../Cell";
 
 export default function Table({ columns = 6, rows = 6 }: TableI): ReactElement {
   const cellGenerator = useCallback(
@@ -10,8 +11,8 @@ export default function Table({ columns = 6, rows = 6 }: TableI): ReactElement {
 
       for (let index = 0; index < columns; index++) {
         cells.push(
-          <td
-            className={cellStyleMatcher(rowIndex, index)}
+          <Cell
+            cellColor={cellColorDetector(rowIndex, index)}
             key={`cell_${index}`}
           />
         );
@@ -33,8 +34,8 @@ export default function Table({ columns = 6, rows = 6 }: TableI): ReactElement {
   }, [rows, cellGenerator]);
 
   return (
-    <table className={tableStyles.tableStyles}>
+    <StyledTable>
       <tbody>{rowsGenerator()}</tbody>
-    </table>
+    </StyledTable>
   );
 }
