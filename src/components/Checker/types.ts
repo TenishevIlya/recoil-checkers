@@ -1,4 +1,6 @@
 export interface CheckerI {
+  top: number;
+  left: number;
   mode: CheckerMode;
 }
 

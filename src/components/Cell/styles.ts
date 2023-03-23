@@ -3,6 +3,7 @@ import styled, { css } from "styled-components";
 export const BaseCellStyles = css`
   width: 100px;
   height: 100px;
+  box-sizing: border-box;
   border: 1px solid rgb(0, 0, 0);
   cursor: pointer;
   display: inline-flex;
@@ -12,10 +13,10 @@ export const BaseCellStyles = css`
 
 export const BrownCell = styled.td`
   ${BaseCellStyles}
-  background-color: rgb(235, 226, 214);
+  background-color: rgb(136, 125, 114);
 `;
 
 export const BeigeCell = styled.td`
   ${BaseCellStyles}
-  background-color: rgb(136, 125, 114);
+  background-color: rgb(235, 226, 214);
 `;
