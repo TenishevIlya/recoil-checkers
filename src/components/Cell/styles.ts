@@ -11,11 +11,6 @@ export const BaseCellStyles = css`
   align-items: center;
 `;
 
-export const BrownCell = styled.td`
-  ${BaseCellStyles}
-  background-color: rgb(136, 125, 114);
-`;
-
 export const BeigeCell = styled.td`
   ${BaseCellStyles}
   background-color: rgb(235, 226, 214);

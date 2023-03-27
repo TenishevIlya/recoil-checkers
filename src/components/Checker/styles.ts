@@ -1,22 +1,23 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import { CheckerMode } from "./types";
 
-export const BaseChecker = css`
+export const CheckerElement = styled.div<{
+  $isActive: boolean;
+  $top: number;
+  $left: number;
+  $mode: CheckerMode;
+}>`
   border-radius: 50%;
   height: 100px;
   width: 100px;
   position: absolute;
-`;
-
-export const WhiteChecker = styled.div<{ $top: number; $left: number }>`
-  ${BaseChecker}
-  background-color: rgb(255, 255, 255);
   top: ${({ $top }) => $top}px;
   left: ${({ $left }) => $left}px;
-`;
+  box-sizing: border-box;
+  background-color: ${(props) =>
+    props.$mode === CheckerMode.black ? "rgb(0, 0, 0)" : "rgb(255, 255, 255)"};
+  transition: top 0.5s, left 0.5s;
+  cursor: pointer;
 
-export const BlackChecker = styled.div<{ $top: number; $left: number }>`
-  ${BaseChecker}
-  background-color: rgb(0, 0, 0);
-  top: ${({ $top }) => $top}px;
-  left: ${({ $left }) => $left}px;
+  border: ${({ $isActive }) => $isActive && "4px solid blue"};
 `;

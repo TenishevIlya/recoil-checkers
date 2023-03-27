@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { RecoilRoot } from "recoil";
 import "./index.css";
 import Layout from "./scenes/Layout";
 
@@ -8,6 +9,8 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <Layout />
+    <RecoilRoot>
+      <Layout />
+    </RecoilRoot>
   </React.StrictMode>
 );
