@@ -1,6 +1,6 @@
-export interface CheckerI {
-  top: number;
-  left: number;
+import type { CellData } from "../../recoil/types";
+
+export interface CheckerI extends CellData {
   mode: CheckerMode;
 }
 

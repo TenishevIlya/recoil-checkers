@@ -1,4 +1,6 @@
-export interface CellI {
+import type { CellData } from "../../recoil/types";
+
+export interface CellI extends CellData {
   cellColor: CellColors;
 }
 
