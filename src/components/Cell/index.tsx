@@ -7,9 +7,10 @@ export default function Cell({
   cellColor,
   columnIndex,
   rowIndex,
+  containCheckerInitially,
 }: CellI): ReactElement {
   return cellColor === CellColors.brown ? (
-    <BrownCell {...{ columnIndex, rowIndex }} />
+    <BrownCell {...{ columnIndex, rowIndex, containCheckerInitially }} />
   ) : (
     <BeigeCell />
   );

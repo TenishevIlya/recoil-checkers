@@ -1,4 +1,5 @@
 export interface BrownCellI {
+  containCheckerInitially: boolean;
   rowIndex: number;
   columnIndex: number;
 }

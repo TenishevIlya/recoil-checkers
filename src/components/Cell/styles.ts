@@ -14,4 +14,5 @@ export const BaseCellStyles = css`
 export const BeigeCell = styled.td`
   ${BaseCellStyles}
   background-color: rgb(235, 226, 214);
+  cursor: not-allowed;
 `;

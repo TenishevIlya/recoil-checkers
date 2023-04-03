@@ -1,61 +1,42 @@
-import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { ReactElement, useCallback, useEffect } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { createElementKey } from "../../../helpers";
 import { AllBrownCells } from "../../../recoil/atoms";
+import { isAvailableToGoCellSelector } from "../../../recoil/selectors";
 import { useUpdateActiveCheckerPosition } from "./hooks";
 import { BrownCellContainer } from "./styles";
-import { BrownCellI, CellDimensions } from "./types";
+import type { BrownCellI } from "./types";
 
 export default function BrownCell({
   rowIndex,
   columnIndex,
+  containCheckerInitially,
 }: BrownCellI): ReactElement {
-  const [cellDimensions, setCellDimension] = useState<CellDimensions | null>(
-    null
-  );
-  const setAtomCellData = useSetRecoilState(
+  const [cellData, setCellData] = useRecoilState(
     AllBrownCells(createElementKey(rowIndex, columnIndex))
   );
   const updateActiveChecker = useUpdateActiveCheckerPosition();
 
-  const handleCellRef = useCallback((cell: HTMLTableCellElement) => {
-    if (cell !== null) {
-      const { height, width } = cell.getBoundingClientRect();
-
-      setCellDimension({ height, width });
-    }
-  }, []);
-
-  const cellData = useMemo(() => {
-    if (cellDimensions) {
-      const { height, width } = cellDimensions;
-
-      return {
-        cellData: {
-          columnIndex,
-          rowIndex,
-        },
-        position: {
-          xPos: width * columnIndex,
-          yPos: height * rowIndex,
-        },
-      };
-    }
-  }, [columnIndex, rowIndex, cellDimensions]);
+  const isAvailableCell = useRecoilValue(
+    isAvailableToGoCellSelector(createElementKey(rowIndex, columnIndex))
+  );
 
   useEffect(() => {
     if (cellData) {
-      setAtomCellData(cellData);
+      setCellData({ ...cellData, containChecker: containCheckerInitially });
     }
-  }, [cellData, setAtomCellData]);
+  }, []);
 
   const handleBrownCellClick = useCallback(() => {
-    if (cellData) {
+    if (cellData && isAvailableCell) {
       updateActiveChecker(cellData);
     }
-  }, [cellData, updateActiveChecker]);
+  }, [cellData, updateActiveChecker, isAvailableCell]);
 
   return (
-    <BrownCellContainer ref={handleCellRef} onClick={handleBrownCellClick} />
+    <BrownCellContainer
+      onClick={handleBrownCellClick}
+      $isAvailableCell={isAvailableCell}
+    />
   );
 }

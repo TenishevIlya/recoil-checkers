@@ -1,14 +1,33 @@
 import { selectorFamily } from "recoil";
-import { AllBrownCells } from "./atoms";
-import { BaseTableElement } from "./types";
+import { CheckerMode } from "../components/Checker/types";
+import { ActiveChecker, AllBrownCells } from "./atoms";
 
-export const initialCheckerDataSelector = selectorFamily<
-  BaseTableElement | null,
-  string
->({
-  key: "InitialCheckerDataSelector",
+export const isAvailableToGoCellSelector = selectorFamily<boolean, string>({
+  key: "IsAvailableToGoCellSelector",
   get:
-    (checkerKey: string) =>
-    ({ get }) =>
-      get(AllBrownCells(checkerKey)),
+    (cellKey: string) =>
+    ({ get }) => {
+      const activeChecker = get(ActiveChecker);
+      const cellToCheck = get(AllBrownCells(cellKey));
+
+      if (activeChecker && cellToCheck) {
+        const { cellData: checkerCellData, mode } = activeChecker;
+        const { cellData, containChecker } = cellToCheck;
+
+        if (containChecker) {
+          return false;
+        }
+
+        if (cellData.columnIndex === checkerCellData.columnIndex) return false;
+
+        if (mode === CheckerMode.white) {
+          return cellData.rowIndex > checkerCellData.rowIndex;
+        }
+        if (mode === CheckerMode.black) {
+          return cellData.rowIndex < checkerCellData.rowIndex;
+        }
+      }
+
+      return false;
+    },
 });

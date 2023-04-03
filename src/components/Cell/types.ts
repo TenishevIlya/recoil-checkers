@@ -1,6 +1,7 @@
 import type { CellData } from "../../recoil/types";
 
 export interface CellI extends CellData {
+  containCheckerInitially: boolean;
   cellColor: CellColors;
 }
 
