@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, useCallback, useMemo } from "react";
+import { ReactElement, ReactNode, useCallback } from "react";
 import type { TableI } from "./types";
 import { cellColorDetector } from "./helper";
 import { FullTableContent, StyledTable } from "./styles";
@@ -6,28 +6,38 @@ import Cell from "../Cell";
 import Checker from "../Checker";
 import { CheckerMode } from "../Checker/types";
 import { createElementKey } from "../../helpers";
-
-const CHECKERS_AMOUNT = 3;
+import { useRecoilValue } from "recoil";
+import { BrownCellsForCheckers } from "../../recoil/atoms";
 
 export default function Table({ columns = 4, rows = 4 }: TableI): ReactElement {
+  const { whiteCheckersCells, blackCheckersCells } = useRecoilValue(
+    BrownCellsForCheckers(createElementKey(rows, columns))
+  );
+
   const cellGenerator = useCallback(
     (rowIndex: number) => {
       const cells: ReactNode[] = [];
+      const allCheckersCells = [...whiteCheckersCells, ...blackCheckersCells];
 
       for (let index = 0; index < columns; index++) {
+        const containChecker = allCheckersCells.some(
+          (value) => value.rowIndex === rowIndex && value.columnIndex === index
+        );
+
         cells.push(
           <Cell
             cellColor={cellColorDetector(rowIndex, index)}
             key={`cell_${index}`}
             columnIndex={index}
             rowIndex={rowIndex}
+            containCheckerInitially={containChecker}
           />
         );
       }
 
       return cells;
     },
-    [columns]
+    [columns, whiteCheckersCells, blackCheckersCells]
   );
 
   const rowsGenerator = useCallback(() => {
@@ -39,29 +49,6 @@ export default function Table({ columns = 4, rows = 4 }: TableI): ReactElement {
 
     return rowsElements;
   }, [rows, cellGenerator]);
-
-  const brownCellsForCheckers = useMemo(() => {
-    const cellsToRender: Array<{ rowIndex: number; columnIndex: number }> = [];
-
-    for (let index = 0; index < rows; index++) {
-      for (let innerIndex = 0; innerIndex < columns; innerIndex++) {
-        if (
-          (index % 2 === 0 && innerIndex % 2 !== 0) ||
-          (index % 2 !== 0 && innerIndex % 2 === 0)
-        ) {
-          cellsToRender.push({ rowIndex: index, columnIndex: innerIndex });
-        }
-      }
-    }
-
-    return {
-      whiteCheckersCells: cellsToRender.slice(0, CHECKERS_AMOUNT),
-      blackCheckersCells: cellsToRender.slice(
-        cellsToRender.length - CHECKERS_AMOUNT,
-        cellsToRender.length
-      ),
-    };
-  }, [rows, columns]);
 
   const renderChecker = useCallback(
     (rowIndex: number, columnIndex: number, mode: CheckerMode) => {
@@ -75,8 +62,6 @@ export default function Table({ columns = 4, rows = 4 }: TableI): ReactElement {
     },
     []
   );
-
-  const { blackCheckersCells, whiteCheckersCells } = brownCellsForCheckers;
 
   return (
     <FullTableContent>

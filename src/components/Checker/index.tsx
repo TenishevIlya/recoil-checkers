@@ -1,8 +1,7 @@
-import { ReactElement, useCallback, useEffect } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { ReactElement, useCallback, useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import { createElementKey } from "../../helpers";
 import { ActiveChecker, AllCheckers } from "../../recoil/atoms";
-import { initialCheckerDataSelector } from "../../recoil/selectors";
 import { CheckerElement } from "./styles";
 import { CheckerI } from "./types";
 
@@ -15,20 +14,19 @@ export default function Checker({
 
   const [checkerData, setCheckerData] = useRecoilState(AllCheckers(checkerKey));
   const [activeChecker, setActiveChecker] = useRecoilState(ActiveChecker);
-
-  const initialCheckerData = useRecoilValue(
-    initialCheckerDataSelector(checkerKey)
-  );
+  const [initialCheckerData] = useState(checkerData);
 
   useEffect(() => {
-    setCheckerData(initialCheckerData);
-  }, [initialCheckerData, setCheckerData]);
+    if (checkerData) {
+      setCheckerData({ ...checkerData, mode });
+    }
+  }, []);
 
   const handleCheckerClick = useCallback(() => {
     if (initialCheckerData) {
-      setActiveChecker(initialCheckerData);
+      setActiveChecker({ ...initialCheckerData, mode });
     }
-  }, [initialCheckerData, setActiveChecker]);
+  }, [initialCheckerData, setActiveChecker, mode]);
 
   if (checkerData) {
     const {
