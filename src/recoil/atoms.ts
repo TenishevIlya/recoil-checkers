@@ -1,10 +1,11 @@
-import { atom, atomFamily, selectorFamily } from "recoil";
+import { atom, atomFamily } from "recoil";
 import type {
   BrownCellsForCheckersI,
   CellElement,
   CheckerElement,
 } from "./types";
-import { CHECKERS_AMOUNT, INITIAL_POSITION } from "./constants";
+import { CHECKERS_AMOUNT } from "./constants";
+import { computeElementInitialData } from "./helpers";
 
 export const BrownCellsForCheckers = atomFamily<BrownCellsForCheckersI, string>(
   {
@@ -44,40 +45,25 @@ export const ActiveChecker = atom<CheckerElement | null>({
 
 export const AllCheckers = atomFamily<CheckerElement | null, string>({
   key: "AllCheckers",
-  default: selectorFamily<CheckerElement | null, string>({
-    key: "AllCheckers/CheckerInitializer",
-    get:
-      (param: string) =>
-      ({ get }) => {
-        const relatedCell = get(AllBrownCells(param));
+  default: (param: string) => {
+    const initialData = computeElementInitialData(param);
 
-        if (relatedCell) {
-          return {
-            ...relatedCell,
-          };
-        }
-
-        return null;
-      },
-  }),
+    return {
+      ...initialData,
+      isAlive: true,
+      name: param,
+    };
+  },
 });
 
 export const AllBrownCells = atomFamily<CellElement | null, string>({
   key: "AllBrownCells",
   default: (param: string) => {
-    const [rowIndex, columnIndex] = param.split("_").map(Number);
-    const { xPos: initialXPos, yPos: initialYPos } = INITIAL_POSITION;
+    const initialData = computeElementInitialData(param);
 
     return {
-      cellData: {
-        rowIndex,
-        columnIndex,
-      },
-      position: {
-        xPos: initialXPos + columnIndex * 100,
-        yPos: initialYPos + rowIndex * 100,
-      },
-      containChecker: false,
+      ...initialData,
+      associatedCellKey: null,
     };
   },
 });

@@ -4,71 +4,94 @@ import {
   useResetRecoilState,
   useSetRecoilState,
 } from "recoil";
-import { createElementKey } from "../../../helpers";
+import { createElementKeyFromObj } from "../../../helpers";
 import {
   ActiveChecker,
   AllBrownCells,
   AllCheckers,
 } from "../../../recoil/atoms";
-import { BaseTableElement } from "../../../recoil/types";
+import type { CellElement } from "../../../recoil/types";
+import { getCrossCellKey, isAbleToBeat } from "./helpers";
+import type { DefaultActionHookT } from "./types";
 
-export const useUpdateActiveCheckerPosition = (): ((
-  value: BaseTableElement
-) => void) => {
-  const activeChecker = useRecoilValue(ActiveChecker);
-  const updateCellContain = useUpdateCellCheckerContain();
+export const useUpdateActiveCheckerPosition =
+  (): DefaultActionHookT<CellElement> => {
+    const activeChecker = useRecoilValue(ActiveChecker);
 
-  let activeCheckerKey: string;
+    const setCheckerData = useSetRecoilState(
+      AllCheckers(activeChecker?.name || "")
+    );
 
-  if (activeChecker) {
-    const {
-      cellData: { columnIndex, rowIndex },
-    } = activeChecker;
+    const updatePosition = (value: CellElement) => {
+      if (activeChecker) {
+        const { name, isAlive, mode } = activeChecker;
 
-    activeCheckerKey = createElementKey(rowIndex, columnIndex);
-  } else {
-    activeCheckerKey = "";
-  }
+        setCheckerData({
+          ...value,
+          name,
+          isAlive,
+          mode,
+        });
+      }
+    };
 
-  const setCheckerData = useSetRecoilState(AllCheckers(activeCheckerKey));
-  const resetActiveChecker = useResetRecoilState(ActiveChecker);
-
-  const updatePosition = (value: BaseTableElement) => {
-    if (activeChecker) {
-      const { rowIndex: rowIndexForAdd, columnIndex: columnIndexForAdd } =
-        value.cellData;
-      const { rowIndex: rowIndexForRemove, columnIndex: columnIndexForRemove } =
-        activeChecker.cellData;
-
-      setCheckerData({ ...value, mode: activeChecker.mode });
-      updateCellContain(
-        createElementKey(rowIndexForAdd, columnIndexForAdd),
-        createElementKey(rowIndexForRemove, columnIndexForRemove)
-      );
-      resetActiveChecker();
-    }
+    return updatePosition;
   };
 
-  return updatePosition;
-};
+export const useUpdatePositionSideOperations =
+  (): DefaultActionHookT<CellElement> => {
+    const activeChecker = useRecoilValue(ActiveChecker);
+    const resetActiveChecker = useResetRecoilState(ActiveChecker);
+    const updateCellContain = useUpdateCellCheckerContain();
+    const beatChecker = useBeatChecker();
+
+    const sideEffects = (selectedCell: CellElement): void => {
+      if (activeChecker) {
+        const { cellData: activeCheckerCellData } = activeChecker;
+        const { cellData: selectedCellData } = selectedCell;
+
+        const crossCellKey = getCrossCellKey({
+          currCellData: selectedCellData,
+          prevCellData: activeCheckerCellData,
+        });
+
+        updateCellContain(
+          activeChecker.name,
+          createElementKeyFromObj(selectedCellData),
+          createElementKeyFromObj(activeCheckerCellData)
+        );
+        if (isAbleToBeat(activeCheckerCellData, selectedCellData)) {
+          beatChecker(crossCellKey);
+        }
+        resetActiveChecker();
+      }
+    };
+
+    return sideEffects;
+  };
 
 export const useUpdateCellCheckerContain = (): ((
+  associatedCellKey: string,
   keyToAddContain: string,
   keyToRemoveContain: string
 ) => void) => {
   const updater = useRecoilTransaction_UNSTABLE(
     ({ set }) =>
-      (keyToAddContain: string, keyToRemoveContain: string) => {
+      (
+        associatedCellKey: string,
+        keyToAddContain: string,
+        keyToRemoveContain: string
+      ) => {
         set(AllBrownCells(keyToAddContain), (state) => {
           if (state) {
-            return { ...state, containChecker: true };
+            return { ...state, associatedCellKey };
           }
           return null;
         });
 
         set(AllBrownCells(keyToRemoveContain), (state) => {
           if (state) {
-            return { ...state, containChecker: false };
+            return { ...state, associatedCellKey: null };
           }
           return null;
         });
@@ -76,4 +99,36 @@ export const useUpdateCellCheckerContain = (): ((
   );
 
   return updater;
+};
+
+export const useBeatChecker = (): DefaultActionHookT<string> => {
+  const checkBeatAction = useRecoilTransaction_UNSTABLE(
+    ({ get, set }) =>
+      (key: string) => {
+        const cellWithAssignedChecker = get(AllBrownCells(key));
+
+        if (cellWithAssignedChecker?.associatedCellKey) {
+          set(
+            AllCheckers(cellWithAssignedChecker.associatedCellKey),
+            (state) => {
+              if (state) {
+                return { ...state, isAlive: false };
+              }
+
+              return null;
+            }
+          );
+
+          set(AllBrownCells(key), (state) => {
+            if (state) {
+              return { ...state, associatedCellKey: null };
+            }
+
+            return null;
+          });
+        }
+      }
+  );
+
+  return checkBeatAction;
 };

@@ -12,9 +12,9 @@ export const isAvailableToGoCellSelector = selectorFamily<boolean, string>({
 
       if (activeChecker && cellToCheck) {
         const { cellData: checkerCellData, mode } = activeChecker;
-        const { cellData, containChecker } = cellToCheck;
+        const { cellData, associatedCellKey } = cellToCheck;
 
-        if (containChecker) {
+        if (associatedCellKey) {
           return false;
         }
 

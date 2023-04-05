@@ -3,7 +3,10 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { createElementKey } from "../../../helpers";
 import { AllBrownCells } from "../../../recoil/atoms";
 import { isAvailableToGoCellSelector } from "../../../recoil/selectors";
-import { useUpdateActiveCheckerPosition } from "./hooks";
+import {
+  useUpdateActiveCheckerPosition,
+  useUpdatePositionSideOperations,
+} from "./hooks";
 import { BrownCellContainer } from "./styles";
 import type { BrownCellI } from "./types";
 
@@ -12,26 +15,34 @@ export default function BrownCell({
   columnIndex,
   containCheckerInitially,
 }: BrownCellI): ReactElement {
-  const [cellData, setCellData] = useRecoilState(
-    AllBrownCells(createElementKey(rowIndex, columnIndex))
-  );
-  const updateActiveChecker = useUpdateActiveCheckerPosition();
+  const cellKey = createElementKey(rowIndex, columnIndex);
 
-  const isAvailableCell = useRecoilValue(
-    isAvailableToGoCellSelector(createElementKey(rowIndex, columnIndex))
-  );
+  const [cellData, setCellData] = useRecoilState(AllBrownCells(cellKey));
+  const updateActiveChecker = useUpdateActiveCheckerPosition();
+  const updatePositionSideOperations = useUpdatePositionSideOperations();
+
+  const isAvailableCell = useRecoilValue(isAvailableToGoCellSelector(cellKey));
 
   useEffect(() => {
     if (cellData) {
-      setCellData({ ...cellData, containChecker: containCheckerInitially });
+      setCellData({
+        ...cellData,
+        associatedCellKey: containCheckerInitially ? cellKey : null,
+      });
     }
   }, []);
 
   const handleBrownCellClick = useCallback(() => {
     if (cellData && isAvailableCell) {
       updateActiveChecker(cellData);
+      updatePositionSideOperations(cellData);
     }
-  }, [cellData, updateActiveChecker, isAvailableCell]);
+  }, [
+    cellData,
+    updateActiveChecker,
+    isAvailableCell,
+    updatePositionSideOperations,
+  ]);
 
   return (
     <BrownCellContainer
