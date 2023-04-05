@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { createElementKey } from "../../helpers";
 import { ActiveChecker, AllCheckers } from "../../recoil/atoms";
@@ -14,7 +14,6 @@ export default function Checker({
 
   const [checkerData, setCheckerData] = useRecoilState(AllCheckers(checkerKey));
   const [activeChecker, setActiveChecker] = useRecoilState(ActiveChecker);
-  const [initialCheckerData] = useState(checkerData);
 
   useEffect(() => {
     if (checkerData) {
@@ -23,22 +22,18 @@ export default function Checker({
   }, []);
 
   const handleCheckerClick = useCallback(() => {
-    if (initialCheckerData) {
-      setActiveChecker({ ...initialCheckerData, mode });
+    if (checkerData) {
+      setActiveChecker({ ...checkerData, mode });
     }
-  }, [initialCheckerData, setActiveChecker, mode]);
+  }, [checkerData, setActiveChecker, mode]);
 
-  if (checkerData) {
+  if (checkerData && checkerData.isAlive) {
     const {
       position: { xPos, yPos },
     } = checkerData;
 
     const isActiveChecker =
-      !!activeChecker &&
-      createElementKey(
-        activeChecker.cellData.rowIndex,
-        activeChecker.cellData.columnIndex
-      ) === checkerKey;
+      !!activeChecker && activeChecker.name === checkerKey;
 
     return (
       <CheckerElement

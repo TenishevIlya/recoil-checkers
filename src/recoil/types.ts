@@ -21,9 +21,11 @@ export interface CellData {
 }
 
 export interface CheckerElement extends BaseTableElement {
+  isAlive: boolean;
+  name: string;
   mode?: CheckerMode;
 }
 
 export interface CellElement extends BaseTableElement {
-  containChecker: boolean;
+  associatedCellKey: string | null;
 }
