@@ -63,7 +63,7 @@ export const AllBrownCells = atomFamily<CellElement | null, string>({
 
     return {
       ...initialData,
-      associatedCellKey: null,
+      associatedCheckerKey: null,
     };
   },
 });

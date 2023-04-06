@@ -1,6 +1,7 @@
 import { selectorFamily } from "recoil";
 import { CheckerMode } from "../components/Checker/types";
 import { ActiveChecker, AllBrownCells } from "./atoms";
+import { canCheckerBeUsedForBeat, isCellNeighbor } from "./helpers";
 
 export const isAvailableToGoCellSelector = selectorFamily<boolean, string>({
   key: "IsAvailableToGoCellSelector",
@@ -12,19 +13,35 @@ export const isAvailableToGoCellSelector = selectorFamily<boolean, string>({
 
       if (activeChecker && cellToCheck) {
         const { cellData: checkerCellData, mode } = activeChecker;
-        const { cellData, associatedCellKey } = cellToCheck;
+        const { cellData, associatedCheckerKey } = cellToCheck;
 
-        if (associatedCellKey) {
+        const canBeUsedForBeat = canCheckerBeUsedForBeat(
+          activeChecker,
+          cellToCheck,
+          get
+        );
+
+        if (canBeUsedForBeat) {
+          return true;
+        }
+
+        if (associatedCheckerKey) {
           return false;
         }
 
         if (cellData.columnIndex === checkerCellData.columnIndex) return false;
 
         if (mode === CheckerMode.white) {
-          return cellData.rowIndex > checkerCellData.rowIndex;
+          return (
+            cellData.rowIndex > checkerCellData.rowIndex &&
+            isCellNeighbor(cellData, checkerCellData)
+          );
         }
         if (mode === CheckerMode.black) {
-          return cellData.rowIndex < checkerCellData.rowIndex;
+          return (
+            cellData.rowIndex < checkerCellData.rowIndex &&
+            isCellNeighbor(cellData, checkerCellData)
+          );
         }
       }
 

@@ -27,7 +27,7 @@ export default function BrownCell({
     if (cellData) {
       setCellData({
         ...cellData,
-        associatedCellKey: containCheckerInitially ? cellKey : null,
+        associatedCheckerKey: containCheckerInitially ? cellKey : null,
       });
     }
   }, []);
