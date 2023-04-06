@@ -27,5 +27,5 @@ export interface CheckerElement extends BaseTableElement {
 }
 
 export interface CellElement extends BaseTableElement {
-  associatedCellKey: string | null;
+  associatedCheckerKey: string | null;
 }

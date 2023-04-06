@@ -71,27 +71,27 @@ export const useUpdatePositionSideOperations =
   };
 
 export const useUpdateCellCheckerContain = (): ((
-  associatedCellKey: string,
+  associatedCheckerKey: string,
   keyToAddContain: string,
   keyToRemoveContain: string
 ) => void) => {
   const updater = useRecoilTransaction_UNSTABLE(
     ({ set }) =>
       (
-        associatedCellKey: string,
+        associatedCheckerKey: string,
         keyToAddContain: string,
         keyToRemoveContain: string
       ) => {
         set(AllBrownCells(keyToAddContain), (state) => {
           if (state) {
-            return { ...state, associatedCellKey };
+            return { ...state, associatedCheckerKey };
           }
           return null;
         });
 
         set(AllBrownCells(keyToRemoveContain), (state) => {
           if (state) {
-            return { ...state, associatedCellKey: null };
+            return { ...state, associatedCheckerKey: null };
           }
           return null;
         });
@@ -107,9 +107,9 @@ export const useBeatChecker = (): DefaultActionHookT<string> => {
       (key: string) => {
         const cellWithAssignedChecker = get(AllBrownCells(key));
 
-        if (cellWithAssignedChecker?.associatedCellKey) {
+        if (cellWithAssignedChecker?.associatedCheckerKey) {
           set(
-            AllCheckers(cellWithAssignedChecker.associatedCellKey),
+            AllCheckers(cellWithAssignedChecker.associatedCheckerKey),
             (state) => {
               if (state) {
                 return { ...state, isAlive: false };
@@ -121,7 +121,7 @@ export const useBeatChecker = (): DefaultActionHookT<string> => {
 
           set(AllBrownCells(key), (state) => {
             if (state) {
-              return { ...state, associatedCellKey: null };
+              return { ...state, associatedCheckerKey: null };
             }
 
             return null;
