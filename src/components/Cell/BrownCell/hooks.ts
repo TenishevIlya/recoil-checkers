@@ -1,7 +1,7 @@
 import {
+  useRecoilState,
   useRecoilTransaction_UNSTABLE,
   useRecoilValue,
-  useResetRecoilState,
   useSetRecoilState,
 } from "recoil";
 import { createElementKeyFromObj } from "../../../helpers";
@@ -16,7 +16,7 @@ import type { DefaultActionHookT } from "./types";
 
 export const useUpdateActiveCheckerPosition =
   (): DefaultActionHookT<CellElement> => {
-    const activeChecker = useRecoilValue(ActiveChecker);
+    const [activeChecker, setActiveChecker] = useRecoilState(ActiveChecker);
 
     const setCheckerData = useSetRecoilState(
       AllCheckers(activeChecker?.name || "")
@@ -25,13 +25,10 @@ export const useUpdateActiveCheckerPosition =
     const updatePosition = (value: CellElement) => {
       if (activeChecker) {
         const { name, isAlive, mode } = activeChecker;
+        const updatedData = { ...value, name, isAlive, mode };
 
-        setCheckerData({
-          ...value,
-          name,
-          isAlive,
-          mode,
-        });
+        setCheckerData(updatedData);
+        setActiveChecker(updatedData);
       }
     };
 
@@ -41,7 +38,6 @@ export const useUpdateActiveCheckerPosition =
 export const useUpdatePositionSideOperations =
   (): DefaultActionHookT<CellElement> => {
     const activeChecker = useRecoilValue(ActiveChecker);
-    const resetActiveChecker = useResetRecoilState(ActiveChecker);
     const updateCellContain = useUpdateCellCheckerContain();
     const beatChecker = useBeatChecker();
 
@@ -63,7 +59,6 @@ export const useUpdatePositionSideOperations =
         if (isAbleToBeat(activeCheckerCellData, selectedCellData)) {
           beatChecker(crossCellKey);
         }
-        resetActiveChecker();
       }
     };
 

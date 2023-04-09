@@ -5,6 +5,12 @@ export const LayoutContainer = styled.section`
   width: 100vw;
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+`;
+
+export const CurrentSideTurnDescription = styled.p`
+  font-size: 30px;
+  text-transform: capitalize;
 `;

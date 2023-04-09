@@ -6,6 +6,7 @@ import type {
 } from "./types";
 import { CHECKERS_AMOUNT } from "./constants";
 import { computeElementInitialData } from "./helpers";
+import { CheckerMode } from "../components/Checker/types";
 
 export const BrownCellsForCheckers = atomFamily<BrownCellsForCheckersI, string>(
   {
@@ -37,6 +38,11 @@ export const BrownCellsForCheckers = atomFamily<BrownCellsForCheckersI, string>(
     },
   }
 );
+
+export const CurrentSideTurn = atom<CheckerMode>({
+  key: "CurrentSideTurn",
+  default: CheckerMode.white,
+});
 
 export const ActiveChecker = atom<CheckerElement | null>({
   key: "ActiveChecker",
