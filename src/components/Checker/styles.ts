@@ -3,6 +3,7 @@ import { CheckerMode } from "./types";
 
 export const CheckerElement = styled.div<{
   $isActive: boolean;
+  $isCheckerModeTurn: boolean;
   $top: number;
   $left: number;
   $mode: CheckerMode;
@@ -17,7 +18,8 @@ export const CheckerElement = styled.div<{
   background-color: ${(props) =>
     props.$mode === CheckerMode.black ? "rgb(0, 0, 0)" : "rgb(255, 255, 255)"};
   transition: top 0.5s, left 0.5s;
-  cursor: pointer;
+  cursor: ${({ $isCheckerModeTurn }) =>
+    $isCheckerModeTurn ? "pointer" : "not-allowed"};
 
   border: ${({ $isActive }) => $isActive && "4px solid blue"};
 `;

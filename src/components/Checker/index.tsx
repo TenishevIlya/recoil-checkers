@@ -1,9 +1,14 @@
 import { ReactElement, useCallback, useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { createElementKey } from "../../helpers";
-import { ActiveChecker, AllCheckers } from "../../recoil/atoms";
+import {
+  ActiveChecker,
+  AllCheckers,
+  CurrentSideTurn,
+} from "../../recoil/atoms";
 import { CheckerElement } from "./styles";
-import { CheckerI } from "./types";
+import { CheckerI, CheckerMode } from "./types";
+import { canContinueBeat } from "../../recoil/selectors";
 
 export default function Checker({
   mode,
@@ -11,9 +16,12 @@ export default function Checker({
   rowIndex,
 }: CheckerI): ReactElement | null {
   const checkerKey = createElementKey(rowIndex, columnIndex);
+  const [currentSideTurn, setCurrentSideTurn] = useRecoilState(CurrentSideTurn);
+  const isCheckerModeTurn = mode === currentSideTurn;
 
   const [checkerData, setCheckerData] = useRecoilState(AllCheckers(checkerKey));
   const [activeChecker, setActiveChecker] = useRecoilState(ActiveChecker);
+  const canBeat = useRecoilValue(canContinueBeat);
 
   useEffect(() => {
     if (checkerData) {
@@ -21,11 +29,22 @@ export default function Checker({
     }
   }, []);
 
+  useEffect(() => {
+    if (!canBeat && checkerData) {
+      const { mode } = checkerData;
+
+      setCurrentSideTurn(
+        mode === CheckerMode.white ? CheckerMode.black : CheckerMode.white
+      );
+      setActiveChecker(null);
+    }
+  }, [canBeat, checkerData, setActiveChecker, setCurrentSideTurn]);
+
   const handleCheckerClick = useCallback(() => {
-    if (checkerData) {
+    if (checkerData && isCheckerModeTurn) {
       setActiveChecker({ ...checkerData, mode });
     }
-  }, [checkerData, setActiveChecker, mode]);
+  }, [checkerData, setActiveChecker, mode, isCheckerModeTurn]);
 
   if (checkerData && checkerData.isAlive) {
     const {
@@ -42,6 +61,7 @@ export default function Checker({
         $left={xPos}
         onClick={handleCheckerClick}
         $isActive={isActiveChecker}
+        $isCheckerModeTurn={isCheckerModeTurn}
       />
     );
   }
