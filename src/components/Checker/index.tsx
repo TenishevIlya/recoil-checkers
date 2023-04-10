@@ -9,6 +9,7 @@ import {
 import { CheckerElement } from "./styles";
 import { CheckerI, CheckerMode } from "./types";
 import { canContinueBeat } from "../../recoil/selectors";
+import { useSetActiveCheckerBeatCells } from "../Cell/BrownCell/hooks";
 
 export default function Checker({
   mode,
@@ -22,6 +23,7 @@ export default function Checker({
   const [checkerData, setCheckerData] = useRecoilState(AllCheckers(checkerKey));
   const [activeChecker, setActiveChecker] = useRecoilState(ActiveChecker);
   const canBeat = useRecoilValue(canContinueBeat);
+  const setActiveCheckerBeatCells = useSetActiveCheckerBeatCells();
 
   useEffect(() => {
     if (checkerData) {
@@ -43,8 +45,15 @@ export default function Checker({
   const handleCheckerClick = useCallback(() => {
     if (checkerData && isCheckerModeTurn) {
       setActiveChecker({ ...checkerData, mode });
+      setActiveCheckerBeatCells();
     }
-  }, [checkerData, setActiveChecker, mode, isCheckerModeTurn]);
+  }, [
+    checkerData,
+    setActiveChecker,
+    mode,
+    isCheckerModeTurn,
+    setActiveCheckerBeatCells,
+  ]);
 
   if (checkerData && checkerData.isAlive) {
     const {
