@@ -8,6 +8,7 @@ import type {
 } from "./types";
 import { AllBrownCells, AllCheckers, TableDimensions } from "./atoms";
 import { getCrossCellKey } from "../components/Cell/BrownCell/helpers";
+import { createElementKey } from "../helpers";
 
 export const computeElementInitialData = (param: string): BaseTableElement => {
   const [rowIndex, columnIndex] = param.split("_").map(Number);
@@ -87,4 +88,33 @@ export const isCellNeighbor = (
     Math.abs(cellData.rowIndex - checkerCellData.rowIndex) === 1 &&
     Math.abs(cellData.columnIndex - checkerCellData.columnIndex) === 1
   );
+};
+
+export const getPossibleCellsToBeat = (
+  activeChecker: CheckerElement,
+  get: GetRecoilValue
+): (CellElement | null)[] => {
+  const { rowIndex, columnIndex } = activeChecker.cellData;
+
+  const topLeftCell = get(
+    AllBrownCells(createElementKey(rowIndex - 2, columnIndex - 2))
+  );
+  const topRightCell = get(
+    AllBrownCells(createElementKey(rowIndex - 2, columnIndex + 2))
+  );
+  const bottomRightCell = get(
+    AllBrownCells(createElementKey(rowIndex + 2, columnIndex + 2))
+  );
+  const bottomLeftCell = get(
+    AllBrownCells(createElementKey(rowIndex + 2, columnIndex - 2))
+  );
+
+  const possibleCellsToBeat = [
+    bottomLeftCell,
+    bottomRightCell,
+    topLeftCell,
+    topRightCell,
+  ];
+
+  return possibleCellsToBeat;
 };

@@ -55,6 +55,11 @@ export const ActiveChecker = atom<CheckerElement | null>({
   default: null,
 });
 
+export const ActiveCheckerBeatCells = atom<string[]>({
+  key: "ActiveCheckerBeatCells",
+  default: [],
+});
+
 export const AllCheckers = atomFamily<CheckerElement | null, string>({
   key: "AllCheckers",
   default: (param: string) => {

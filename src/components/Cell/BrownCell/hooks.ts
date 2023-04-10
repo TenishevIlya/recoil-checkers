@@ -4,19 +4,25 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from "recoil";
-import { createElementKeyFromObj } from "../../../helpers";
+import { createElementKey, createElementKeyFromObj } from "../../../helpers";
 import {
   ActiveChecker,
+  ActiveCheckerBeatCells,
   AllBrownCells,
   AllCheckers,
 } from "../../../recoil/atoms";
 import type { CellElement } from "../../../recoil/types";
 import { getCrossCellKey, isAbleToBeat } from "./helpers";
 import type { DefaultActionHookT } from "./types";
+import {
+  canCheckerBeUsedForBeat,
+  getPossibleCellsToBeat,
+} from "../../../recoil/helpers";
 
 export const useUpdateActiveCheckerPosition =
   (): DefaultActionHookT<CellElement> => {
     const [activeChecker, setActiveChecker] = useRecoilState(ActiveChecker);
+    const setActiveCheckerBeatCells = useSetActiveCheckerBeatCells();
 
     const setCheckerData = useSetRecoilState(
       AllCheckers(activeChecker?.name || "")
@@ -41,6 +47,7 @@ export const useUpdateActiveCheckerPosition =
           setActiveChecker(null);
         } else {
           setActiveChecker(updatedData);
+          setActiveCheckerBeatCells();
         }
       }
     };
@@ -139,4 +146,36 @@ export const useBeatChecker = (): DefaultActionHookT<string> => {
   );
 
   return checkBeatAction;
+};
+
+export const useSetActiveCheckerBeatCells = (): (() => void) => {
+  const updateCellsToBeat = useRecoilTransaction_UNSTABLE(
+    ({ get, set }) =>
+      () => {
+        const activeChecker = get(ActiveChecker);
+
+        if (activeChecker) {
+          const possibleCellsToBeat = getPossibleCellsToBeat(
+            activeChecker,
+            get
+          );
+
+          const finalCellsToBeat: string[] = [];
+
+          if (possibleCellsToBeat.length) {
+            possibleCellsToBeat.forEach((cell) => {
+              if (cell && canCheckerBeUsedForBeat(activeChecker, cell, get)) {
+                const { rowIndex, columnIndex } = cell.cellData;
+
+                finalCellsToBeat.push(createElementKey(rowIndex, columnIndex));
+              }
+            });
+
+            set(ActiveCheckerBeatCells, finalCellsToBeat);
+          }
+        }
+      }
+  );
+
+  return updateCellsToBeat;
 };
