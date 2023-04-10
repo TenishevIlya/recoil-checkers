@@ -6,7 +6,7 @@ import type {
   CellElement,
   CheckerElement,
 } from "./types";
-import { AllBrownCells, AllCheckers } from "./atoms";
+import { AllBrownCells, AllCheckers, TableDimensions } from "./atoms";
 import { getCrossCellKey } from "../components/Cell/BrownCell/helpers";
 
 export const computeElementInitialData = (param: string): BaseTableElement => {
@@ -40,6 +40,17 @@ export const canCheckerBeUsedForBeat = (
   const {
     cellData: { rowIndex, columnIndex },
   } = cellToCheck;
+
+  const { rows, columns } = get(TableDimensions);
+
+  if (
+    rowIndex > rows - 1 ||
+    rowIndex < 0 ||
+    columnIndex > columns - 1 ||
+    columnIndex < 0
+  ) {
+    return false;
+  }
 
   if (
     Math.abs(rowIndex - activeCheckerRowIndex) === 2 &&
