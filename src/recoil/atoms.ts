@@ -3,6 +3,7 @@ import type {
   BrownCellsForCheckersI,
   CellElement,
   CheckerElement,
+  TableDimensionsI,
 } from "./types";
 import { CHECKERS_AMOUNT } from "./constants";
 import { computeElementInitialData } from "./helpers";
@@ -38,6 +39,11 @@ export const BrownCellsForCheckers = atomFamily<BrownCellsForCheckersI, string>(
     },
   }
 );
+
+export const TableDimensions = atom<TableDimensionsI>({
+  key: "TableDimensions",
+  default: { rows: 4, columns: 4 },
+});
 
 export const CurrentSideTurn = atom<CheckerMode>({
   key: "CurrentSideTurn",

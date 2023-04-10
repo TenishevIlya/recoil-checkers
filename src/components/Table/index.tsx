@@ -1,5 +1,4 @@
 import { ReactElement, ReactNode, useCallback } from "react";
-import type { TableI } from "./types";
 import { cellColorDetector } from "./helper";
 import { FullTableContent, StyledTable } from "./styles";
 import Cell from "../Cell";
@@ -7,9 +6,10 @@ import Checker from "../Checker";
 import { CheckerMode } from "../Checker/types";
 import { createElementKey } from "../../helpers";
 import { useRecoilValue } from "recoil";
-import { BrownCellsForCheckers } from "../../recoil/atoms";
+import { BrownCellsForCheckers, TableDimensions } from "../../recoil/atoms";
 
-export default function Table({ columns = 4, rows = 4 }: TableI): ReactElement {
+export default function Table(): ReactElement {
+  const { rows, columns } = useRecoilValue(TableDimensions);
   const { whiteCheckersCells, blackCheckersCells } = useRecoilValue(
     BrownCellsForCheckers(createElementKey(rows, columns))
   );

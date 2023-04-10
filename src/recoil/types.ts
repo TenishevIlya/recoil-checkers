@@ -29,3 +29,8 @@ export interface CheckerElement extends BaseTableElement {
 export interface CellElement extends BaseTableElement {
   associatedCheckerKey: string | null;
 }
+
+export interface TableDimensionsI {
+  rows: number;
+  columns: number;
+}
