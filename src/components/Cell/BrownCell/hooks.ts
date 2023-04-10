@@ -24,11 +24,24 @@ export const useUpdateActiveCheckerPosition =
 
     const updatePosition = (value: CellElement) => {
       if (activeChecker) {
-        const { name, isAlive, mode } = activeChecker;
+        const { rowIndex } = value.cellData;
+        const {
+          name,
+          isAlive,
+          mode,
+          cellData: { rowIndex: activeCheckerRowIndex },
+        } = activeChecker;
         const updatedData = { ...value, name, isAlive, mode };
 
+        const isSimpleMove = Math.abs(activeCheckerRowIndex - rowIndex) === 1;
+
         setCheckerData(updatedData);
-        setActiveChecker(updatedData);
+
+        if (isSimpleMove) {
+          setActiveChecker(null);
+        } else {
+          setActiveChecker(updatedData);
+        }
       }
     };
 
