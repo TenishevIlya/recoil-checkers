@@ -10,6 +10,7 @@ import {
   ActiveCheckerBeatCells,
   AllBrownCells,
   AllCheckers,
+  CheckersAmountState,
 } from "../../../recoil/atoms";
 import type { CellElement } from "../../../recoil/types";
 import { getCrossCellKey, isAbleToBeat } from "./helpers";
@@ -123,16 +124,31 @@ export const useBeatChecker = (): DefaultActionHookT<string> => {
         const cellWithAssignedChecker = get(AllBrownCells(key));
 
         if (cellWithAssignedChecker?.associatedCheckerKey) {
-          set(
-            AllCheckers(cellWithAssignedChecker.associatedCheckerKey),
-            (state) => {
-              if (state) {
-                return { ...state, isAlive: false };
-              }
-
-              return null;
-            }
+          const checkerToBeat = AllCheckers(
+            cellWithAssignedChecker.associatedCheckerKey
           );
+
+          set(checkerToBeat, (state) => {
+            if (state) {
+              return { ...state, isAlive: false };
+            }
+
+            return null;
+          });
+
+          set(CheckersAmountState, (state) => {
+            const checkerToBeatValue = get(checkerToBeat);
+
+            if (checkerToBeatValue && checkerToBeatValue.mode) {
+              const { mode } = checkerToBeatValue;
+              return {
+                ...state,
+                [mode]: state[mode] - 1,
+              };
+            }
+
+            return state;
+          });
 
           set(AllBrownCells(key), (state) => {
             if (state) {

@@ -11,6 +11,18 @@ export const LayoutContainer = styled.section`
 `;
 
 export const CurrentSideTurnDescription = styled.p`
+  margin: 0;
   font-size: 30px;
   text-transform: capitalize;
+`;
+
+export const Actions = styled.section`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 16px;
+`;
+
+export const ResetButton = styled.button`
+  height: 30px;
 `;

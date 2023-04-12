@@ -1,6 +1,11 @@
 import { selector, selectorFamily } from "recoil";
 import { CheckerMode } from "../components/Checker/types";
-import { ActiveChecker, ActiveCheckerBeatCells, AllBrownCells } from "./atoms";
+import {
+  ActiveChecker,
+  ActiveCheckerBeatCells,
+  AllBrownCells,
+  CheckersAmountState,
+} from "./atoms";
 import {
   canCheckerBeUsedForBeat,
   getPossibleCellsToBeat,
@@ -77,5 +82,15 @@ export const canContinueBeat = selector<boolean>({
     }
 
     return false;
+  },
+});
+
+export const getGameWinner = selector<CheckerMode | undefined>({
+  key: "EndOfGameRes",
+  get: ({ get }) => {
+    const { black, white } = get(CheckersAmountState);
+
+    if (white === 0) return CheckerMode.black;
+    if (black === 0) return CheckerMode.white;
   },
 });
