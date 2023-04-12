@@ -1,7 +1,7 @@
 import { ReactElement, useCallback, useEffect } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { createElementKey } from "../../../helpers";
-import { AllBrownCells } from "../../../recoil/atoms";
+import { AllBrownCells, AllBrownCellsKeys } from "../../../recoil/atoms";
 import { isAvailableToGoCellSelector } from "../../../recoil/selectors";
 import {
   useUpdateActiveCheckerPosition,
@@ -20,11 +20,13 @@ export default function BrownCell({
   const [cellData, setCellData] = useRecoilState(AllBrownCells(cellKey));
   const updateActiveChecker = useUpdateActiveCheckerPosition();
   const updatePositionSideOperations = useUpdatePositionSideOperations();
+  const updateAllBrownCellsKeys = useSetRecoilState(AllBrownCellsKeys);
 
   const isAvailableCell = useRecoilValue(isAvailableToGoCellSelector(cellKey));
 
   useEffect(() => {
     if (cellData) {
+      updateAllBrownCellsKeys((state) => [...state, cellKey]);
       setCellData({
         ...cellData,
         associatedCheckerKey: containCheckerInitially ? cellKey : null,

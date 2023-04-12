@@ -1,9 +1,10 @@
 import { ReactElement, useCallback, useEffect } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { createElementKey } from "../../helpers";
 import {
   ActiveChecker,
   AllCheckers,
+  AllCheckersKeys,
   CurrentSideTurn,
 } from "../../recoil/atoms";
 import { CheckerElement } from "./styles";
@@ -24,10 +25,12 @@ export default function Checker({
   const [activeChecker, setActiveChecker] = useRecoilState(ActiveChecker);
   const canBeat = useRecoilValue(canContinueBeat);
   const setActiveCheckerBeatCells = useSetActiveCheckerBeatCells();
+  const updateAllCheckersKeys = useSetRecoilState(AllCheckersKeys);
 
   useEffect(() => {
     if (checkerData) {
       setCheckerData({ ...checkerData, mode });
+      updateAllCheckersKeys((state) => [...state, checkerKey]);
     }
   }, []);
 

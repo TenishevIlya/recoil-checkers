@@ -84,3 +84,21 @@ export const AllBrownCells = atomFamily<CellElement | null, string>({
     };
   },
 });
+
+export const AllBrownCellsKeys = atom<string[]>({
+  key: "AllBrownCellsKeys",
+  default: [],
+});
+
+export const AllCheckersKeys = atom<string[]>({
+  key: "AllCheckersKeys",
+  default: [],
+});
+
+export const CheckersAmountState = atom<Record<CheckerMode, number>>({
+  key: "Checkers",
+  default: {
+    black: CHECKERS_AMOUNT,
+    white: CHECKERS_AMOUNT,
+  },
+});
