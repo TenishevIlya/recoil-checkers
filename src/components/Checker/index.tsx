@@ -9,7 +9,6 @@ import {
 } from "../../recoil/atoms";
 import { CheckerElement } from "./styles";
 import { CheckerI, CheckerMode } from "./types";
-import { canContinueBeat } from "../../recoil/selectors";
 import { useSetActiveCheckerBeatCells } from "../Cell/BrownCell/hooks";
 
 export default function Checker({
@@ -18,12 +17,11 @@ export default function Checker({
   rowIndex,
 }: CheckerI): ReactElement | null {
   const checkerKey = createElementKey(rowIndex, columnIndex);
-  const [currentSideTurn, setCurrentSideTurn] = useRecoilState(CurrentSideTurn);
+  const currentSideTurn = useRecoilValue(CurrentSideTurn);
   const isCheckerModeTurn = mode === currentSideTurn;
 
   const [checkerData, setCheckerData] = useRecoilState(AllCheckers(checkerKey));
   const [activeChecker, setActiveChecker] = useRecoilState(ActiveChecker);
-  const canBeat = useRecoilValue(canContinueBeat);
   const setActiveCheckerBeatCells = useSetActiveCheckerBeatCells();
   const updateAllCheckersKeys = useSetRecoilState(AllCheckersKeys);
 
@@ -33,17 +31,6 @@ export default function Checker({
       updateAllCheckersKeys((state) => [...state, checkerKey]);
     }
   }, []);
-
-  useEffect(() => {
-    if (!canBeat && checkerData) {
-      const { mode } = checkerData;
-
-      setCurrentSideTurn(
-        mode === CheckerMode.white ? CheckerMode.black : CheckerMode.white
-      );
-      setActiveChecker(null);
-    }
-  }, [canBeat, checkerData, setActiveChecker, setCurrentSideTurn]);
 
   const handleCheckerClick = useCallback(() => {
     if (checkerData && isCheckerModeTurn) {
