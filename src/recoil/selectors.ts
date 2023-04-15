@@ -6,11 +6,7 @@ import {
   AllBrownCells,
   CheckersAmountState,
 } from "./atoms";
-import {
-  canCheckerBeUsedForBeat,
-  getPossibleCellsToBeat,
-  isCellNeighbor,
-} from "./helpers";
+import { canCheckerBeUsedForBeat, isCellNeighbor } from "./helpers";
 
 export const isAvailableToGoCellSelector = selectorFamily<boolean, string>({
   key: "IsAvailableToGoCellSelector",
@@ -36,12 +32,12 @@ export const isAvailableToGoCellSelector = selectorFamily<boolean, string>({
           get
         );
 
-        if (canBeUsedForBeat) {
-          return true;
-        }
-
         if (associatedCheckerKey) {
           return false;
+        }
+
+        if (canBeUsedForBeat) {
+          return true;
         }
 
         if (cellData.columnIndex === checkerCellData.columnIndex) return false;
@@ -64,33 +60,14 @@ export const isAvailableToGoCellSelector = selectorFamily<boolean, string>({
     },
 });
 
-export const canContinueBeat = selector<boolean>({
-  key: "CanContinueBeat",
-  get: ({ get }) => {
-    const activeChecker = get(ActiveChecker);
-
-    if (activeChecker) {
-      const possibleCellsToBeat = getPossibleCellsToBeat(activeChecker, get);
-
-      if (possibleCellsToBeat.length) {
-        return possibleCellsToBeat.some(
-          (cell) => cell && canCheckerBeUsedForBeat(activeChecker, cell, get)
-        );
-      }
-
-      return false;
-    }
-
-    return false;
-  },
-});
-
-export const getGameWinner = selector<CheckerMode | undefined>({
+export const getGameWinner = selector<CheckerMode | null>({
   key: "EndOfGameRes",
   get: ({ get }) => {
     const { black, white } = get(CheckersAmountState);
 
     if (white === 0) return CheckerMode.black;
     if (black === 0) return CheckerMode.white;
+
+    return null;
   },
 });

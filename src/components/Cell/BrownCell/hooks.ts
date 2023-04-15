@@ -11,19 +11,23 @@ import {
   AllBrownCells,
   AllCheckers,
   CheckersAmountState,
+  CurrentSideTurn,
 } from "../../../recoil/atoms";
 import type { CellElement } from "../../../recoil/types";
-import { getCrossCellKey, isAbleToBeat } from "./helpers";
+import { canContinueBeat, getCrossCellKey, isAbleToBeat } from "./helpers";
 import type { DefaultActionHookT } from "./types";
 import {
   canCheckerBeUsedForBeat,
   getPossibleCellsToBeat,
 } from "../../../recoil/helpers";
+import { isCellNeighbor } from "../../../recoil/helpers";
+import { CheckerMode } from "../../Checker/types";
 
 export const useUpdateActiveCheckerPosition =
   (): DefaultActionHookT<CellElement> => {
     const [activeChecker, setActiveChecker] = useRecoilState(ActiveChecker);
     const setActiveCheckerBeatCells = useSetActiveCheckerBeatCells();
+    const setCurrentSideTurn = useSetRecoilState(CurrentSideTurn);
 
     const setCheckerData = useSetRecoilState(
       AllCheckers(activeChecker?.name || "")
@@ -31,21 +35,27 @@ export const useUpdateActiveCheckerPosition =
 
     const updatePosition = (value: CellElement) => {
       if (activeChecker) {
-        const { rowIndex } = value.cellData;
+        const { cellData } = value;
         const {
           name,
           isAlive,
           mode,
-          cellData: { rowIndex: activeCheckerRowIndex },
+          cellData: activeCheckerCellData,
         } = activeChecker;
         const updatedData = { ...value, name, isAlive, mode };
 
-        const isSimpleMove = Math.abs(activeCheckerRowIndex - rowIndex) === 1;
+        const movedToNeighborCell = isCellNeighbor(
+          activeCheckerCellData,
+          cellData
+        );
 
         setCheckerData(updatedData);
 
-        if (isSimpleMove) {
+        if (movedToNeighborCell) {
           setActiveChecker(null);
+          setCurrentSideTurn(
+            mode === CheckerMode.white ? CheckerMode.black : CheckerMode.white
+          );
         } else {
           setActiveChecker(updatedData);
           setActiveCheckerBeatCells();
@@ -77,6 +87,7 @@ export const useUpdatePositionSideOperations =
           createElementKeyFromObj(selectedCellData),
           createElementKeyFromObj(activeCheckerCellData)
         );
+
         if (isAbleToBeat(activeCheckerCellData, selectedCellData)) {
           beatChecker(crossCellKey);
         }
@@ -157,6 +168,13 @@ export const useBeatChecker = (): DefaultActionHookT<string> => {
 
             return null;
           });
+
+          if (!canContinueBeat(get)) {
+            set(ActiveChecker, null);
+            set(CurrentSideTurn, (mode) =>
+              mode === CheckerMode.white ? CheckerMode.black : CheckerMode.white
+            );
+          }
         }
       }
   );
@@ -180,7 +198,11 @@ export const useSetActiveCheckerBeatCells = (): (() => void) => {
 
           if (possibleCellsToBeat.length) {
             possibleCellsToBeat.forEach((cell) => {
-              if (cell && canCheckerBeUsedForBeat(activeChecker, cell, get)) {
+              if (
+                cell &&
+                canCheckerBeUsedForBeat(activeChecker, cell, get) &&
+                !cell.associatedCheckerKey
+              ) {
                 const { rowIndex, columnIndex } = cell.cellData;
 
                 finalCellsToBeat.push(createElementKey(rowIndex, columnIndex));
