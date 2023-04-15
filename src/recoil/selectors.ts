@@ -4,9 +4,12 @@ import {
   ActiveChecker,
   ActiveCheckerBeatCells,
   AllBrownCells,
+  AllCheckers,
+  AllCheckersKeys,
   CheckersAmountState,
 } from "./atoms";
 import { canCheckerBeUsedForBeat, isCellNeighbor } from "./helpers";
+import { DIMENSIONS_AMOUNT } from "./constants";
 
 export const isAvailableToGoCellSelector = selectorFamily<boolean, string>({
   key: "IsAvailableToGoCellSelector",
@@ -61,13 +64,36 @@ export const isAvailableToGoCellSelector = selectorFamily<boolean, string>({
 });
 
 export const getGameWinner = selector<CheckerMode | null>({
-  key: "EndOfGameRes",
+  key: "getGameWinnerSelector",
   get: ({ get }) => {
     const { black, white } = get(CheckersAmountState);
+    const allCheckersKeys = get(AllCheckersKeys);
 
     if (white === 0) return CheckerMode.black;
     if (black === 0) return CheckerMode.white;
 
-    return null;
+    let checkerAtOppositeSideMode;
+
+    for (let index = 0; index < allCheckersKeys.length; index++) {
+      const {
+        mode,
+        cellData: { rowIndex },
+      } = get(AllCheckers(allCheckersKeys[index]));
+
+      if (mode === CheckerMode.white && rowIndex === DIMENSIONS_AMOUNT - 1) {
+        checkerAtOppositeSideMode = CheckerMode.white;
+        break;
+      }
+
+      if (
+        mode === CheckerMode.black &&
+        rowIndex === DIMENSIONS_AMOUNT - DIMENSIONS_AMOUNT
+      ) {
+        checkerAtOppositeSideMode = CheckerMode.black;
+        break;
+      }
+    }
+
+    return checkerAtOppositeSideMode || null;
   },
 });

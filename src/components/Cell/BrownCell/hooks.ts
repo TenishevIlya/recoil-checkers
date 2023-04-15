@@ -24,7 +24,7 @@ import { isCellNeighbor } from "../../../recoil/helpers";
 import { CheckerMode } from "../../Checker/types";
 
 export const useUpdateActiveCheckerPosition =
-  (): DefaultActionHookT<CellElement> | null => {
+  (): DefaultActionHookT<CellElement> => {
     const [activeChecker, setActiveChecker] = useRecoilState(ActiveChecker);
     const setActiveCheckerBeatCells = useSetActiveCheckerBeatCells();
     const setCurrentSideTurn = useSetRecoilState(CurrentSideTurn);
