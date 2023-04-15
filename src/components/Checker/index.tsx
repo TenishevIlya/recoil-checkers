@@ -8,7 +8,7 @@ import {
   CurrentSideTurn,
 } from "../../recoil/atoms";
 import { CheckerElement } from "./styles";
-import { CheckerI, CheckerMode } from "./types";
+import type { CheckerI } from "./types";
 import { useSetActiveCheckerBeatCells } from "../Cell/BrownCell/hooks";
 
 export default function Checker({

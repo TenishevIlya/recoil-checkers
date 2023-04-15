@@ -1,14 +1,7 @@
 import type { CellData } from "../../../recoil/types";
 
-export interface BrownCellI {
+export interface BrownCellI extends CellData {
   containCheckerInitially: boolean;
-  rowIndex: number;
-  columnIndex: number;
-}
-
-export interface CellDimensions {
-  width: number;
-  height: number;
 }
 
 export type DefaultActionHookT<T> = (param: T) => void;

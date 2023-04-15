@@ -10,8 +10,11 @@ import { AllBrownCells, AllCheckers, TableDimensions } from "./atoms";
 import { getCrossCellKey } from "../components/Cell/BrownCell/helpers";
 import { createElementKey } from "../helpers";
 
+export const getRowColumnIndexesFromKey = (key: string) =>
+  key.split("_").map(Number);
+
 export const computeElementInitialData = (param: string): BaseTableElement => {
-  const [rowIndex, columnIndex] = param.split("_").map(Number);
+  const [rowIndex, columnIndex] = getRowColumnIndexesFromKey(param);
   const { xPos: initialXPos, yPos: initialYPos } = INITIAL_POSITION;
 
   return {
@@ -40,16 +43,19 @@ export const canCheckerBeUsedForBeat = (
 
   const {
     cellData: { rowIndex, columnIndex },
+    associatedCheckerKey,
   } = cellToCheck;
 
   const { rows, columns } = get(TableDimensions);
 
-  if (
-    rowIndex > rows - 1 ||
-    rowIndex < 0 ||
-    columnIndex > columns - 1 ||
-    columnIndex < 0
-  ) {
+  if (associatedCheckerKey) {
+    return false;
+  }
+
+  const rowOutOfBounds = rowIndex > rows - 1 || rowIndex < 0;
+  const columnOutOfBounds = columnIndex > columns - 1 || columnIndex < 0;
+
+  if (rowOutOfBounds || columnOutOfBounds) {
     return false;
   }
 
@@ -93,7 +99,7 @@ export const isCellNeighbor = (
 export const getPossibleCellsToBeat = (
   activeChecker: CheckerElement,
   get: GetRecoilValue
-): (CellElement | null)[] => {
+): CellElement[] => {
   const { rowIndex, columnIndex } = activeChecker.cellData;
 
   const topLeftCell = get(

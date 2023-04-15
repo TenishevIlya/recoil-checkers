@@ -21,17 +21,6 @@ export const getCrossCellKey = ({
   );
 };
 
-export const isAbleToBeat = (prevPos: CellData, currPos: CellData): boolean => {
-  const { rowIndex: rowIndexForAdd, columnIndex: columnIndexForAdd } = prevPos;
-  const { rowIndex: rowIndexForRemove, columnIndex: columnIndexForRemove } =
-    currPos;
-
-  return (
-    Math.abs(rowIndexForAdd - rowIndexForRemove) > 1 &&
-    Math.abs(columnIndexForAdd - columnIndexForRemove) > 1
-  );
-};
-
 export const canContinueBeat = (get: GetRecoilValue): boolean => {
   const activeChecker = get(ActiveChecker);
 
