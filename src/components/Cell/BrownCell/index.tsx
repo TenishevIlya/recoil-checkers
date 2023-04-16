@@ -25,13 +25,11 @@ export default function BrownCell({
   const isAvailableCell = useRecoilValue(isAvailableToGoCellSelector(cellKey));
 
   useEffect(() => {
-    if (cellData) {
-      updateAllBrownCellsKeys((state) => [...state, cellKey]);
-      setCellData({
-        ...cellData,
-        associatedCheckerKey: containCheckerInitially ? cellKey : null,
-      });
-    }
+    updateAllBrownCellsKeys((state) => [...state, cellKey]);
+    setCellData({
+      ...cellData,
+      associatedCheckerKey: containCheckerInitially ? cellKey : null,
+    });
   }, []);
 
   const handleBrownCellClick = useCallback(() => {
