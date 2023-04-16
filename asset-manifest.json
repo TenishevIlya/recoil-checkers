@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/recoil-checkers/static/css/main.e6c13ad2.css",
+    "main.js": "/recoil-checkers/static/js/main.25a08950.js",
+    "index.html": "/recoil-checkers/index.html",
+    "main.e6c13ad2.css.map": "/recoil-checkers/static/css/main.e6c13ad2.css.map",
+    "main.25a08950.js.map": "/recoil-checkers/static/js/main.25a08950.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.25a08950.js"
+  ]
+}
