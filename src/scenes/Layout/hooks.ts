@@ -67,14 +67,14 @@ export const useSetAssociatedCheckerOnReset = (): (() => void) => {
         );
 
         [...whiteCheckersCells, ...blackCheckersCells].forEach(
-          ({ columnIndex, rowIndex }) =>
-            set(
-              AllBrownCells(createElementKey(rowIndex, columnIndex)),
-              (state) => ({
-                ...state,
-                associatedCheckerKey: createElementKey(rowIndex, columnIndex),
-              })
-            )
+          ({ columnIndex, rowIndex }) => {
+            const key = createElementKey(rowIndex, columnIndex);
+
+            return set(AllBrownCells(key), (state) => ({
+              ...state,
+              associatedCheckerKey: key,
+            }));
+          }
         );
       }
   );
